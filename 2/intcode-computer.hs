@@ -1,3 +1,5 @@
+import Debug.Trace
+
 -- Returns a new list based on the input, with one of the values replaced
 replaceAt :: Int -> Int -> [Int] -> [Int]
 replaceAt index value l = head ++ [value] ++ (drop 1 rest)
@@ -16,6 +18,7 @@ performOp program i = replaceAt dest (op a b) program
             2 -> x * y
 
 process :: (Int, [Int]) -> (Int, [Int])
+-- process (index, program) | trace ("process " ++ show index ++ " " ++ show (program !! 0)) False = undefined
 process (index, program)
     | program !! index == 99 = (index, program)
     | otherwise = process (index + 4, updated_program)
@@ -39,6 +42,21 @@ parseStr x =
     let values = splitCommas x
     in map (read::String->Int) values
 
+nextPair :: (Int, Int) -> (Int, Int)
+nextPair (noun, verb)
+    | verb == 99 = ((noun+1), 0)
+    | otherwise = (noun, (verb+1))
+
+tryValues :: [Int] -> (Int, Int) -> (Int, Int)
+tryValues program (noun, verb) | trace ("tryValues " ++ show noun ++ " " ++ show verb) False = undefined
+tryValues program (noun, verb)
+    | ((noun > 99) || (verb > 99)) = (999, 999)
+    | (snd completeProgram) !! 0 == 19690720 = (noun, verb)
+    | otherwise = tryValues program (nextNoun, nextVerb)
+    where newProgram = replaceAt 2 verb $ replaceAt 1 noun program
+          completeProgram = process (0, newProgram)
+          (nextNoun, nextVerb) = nextPair (noun, verb)
+
 main = do 
     putStrLn "----Test Programs----"
     print $ process (0, testProgram)
@@ -53,4 +71,5 @@ main = do
     let actualProgram = replaceAt 2 2 $ replaceAt 1 12 initialProgram
     putStrLn "--------Result-------"
     print $ process (0, actualProgram)
+    print $ tryValues initialProgram (0, 0)
     

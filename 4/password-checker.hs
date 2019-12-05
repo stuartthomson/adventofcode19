@@ -1,14 +1,14 @@
-cycleByOne :: [Int] -> [Int]
+cycleByOne :: [a] -> [a]
 cycleByOne password = take (length password) $ drop 1 $ cycle password
 
--- The 'or' function is a little counterintuive here. It returns True if any
--- element in the array is True
-pair :: [Int] -> Bool
-pair password = or $ zipWith (==) (init password) (init (cycleByOne password))
+compareWithNext :: (a -> a -> b) -> [a] -> [b]
+compareWithNext comparator l = zipWith comparator (init l) (init (cycleByOne l))
 
--- This is so similar to the 'pair' function that probably I should do something cleverer.
+pair :: [Int] -> Bool
+pair password = or $ compareWithNext (==) password
+
 decreases :: [Int] -> Bool
-decreases password = or $ zipWith (>) (init password) (init (cycleByOne password))
+decreases password = or $ compareWithNext (>) password
 
 getDigits :: Int -> [Int]
 getDigits x
@@ -17,7 +17,7 @@ getDigits x
 
 valid :: Int -> Bool
 valid value = 
-    (pair password) && not (decreases password)
+    (pair password) && not (decreases password) && (theresABlockOfTwo password)
     where password = getDigits value
 
 toInt :: Bool -> Int
@@ -29,6 +29,14 @@ countValidPasswords :: Int -> Int -> Int
 countValidPasswords min max =
     sum $ map toInt bools 
     where bools = [ valid val | val <- [min..max] ]
+
+blocks :: [Int] -> [Int]
+blocks l
+    | l == [] = [0]
+    | otherwise = [length (takeWhile (== head l) l)] ++ (blocks $ dropWhile (== head l) l)
+
+theresABlockOfTwo :: [Int] -> Bool
+theresABlockOfTwo l = or $ map (2==) $ blocks l
 
 main = do
     print $ countValidPasswords 240920 789857

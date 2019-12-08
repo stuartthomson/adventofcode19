@@ -26,9 +26,9 @@ toInt val
     | otherwise = 0
 
 countValidPasswords :: Int -> Int -> Int
-countValidPasswords min max =
+countValidPasswords a b =
     sum $ map toInt bools 
-    where bools = [ valid val | val <- [min..max] ]
+    where bools = [ valid val | val <- [a..b] ]
 
 blocks :: [Int] -> [Int]
 blocks l

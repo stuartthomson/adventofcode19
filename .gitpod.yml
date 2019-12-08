@@ -1,0 +1,5 @@
+image:
+  file: gitpod.Dockerfile
+vscode:
+  extensions:
+    - justusadam.language-haskell@2.6.0:CvYnp3YmQPTuto0m1di+1A==
